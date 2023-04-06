@@ -1,4 +1,5 @@
-const router = require('express').Router()
+const userRouter = require('express').Router()
+const validateMiddleware = require('../middleware/validatorMiddleware')
 const data = [
     {
         "id": 1,
@@ -14,15 +15,15 @@ const data = [
     }
 
 ]
-router.get("/user", (req, res) => {
+userRouter.get("/", (req, res) => {
     res.status(200).json(data)
 })
-router.get("/user/:id", (req, res) => {
+userRouter.get("/:id", (req, res) => {
     const id = req.params.id
     const person = data.find((element) => element.id = id)
     res.status(200).json(person)
 })
-router.post("/user", (req, res, next) => {
+userRouter.post("/", validateMiddleware, (req, res, next) => {
     const id = data.reduce((acc, curr) => {
         return acc > curr.id ? acc : curr.id
 
@@ -36,22 +37,19 @@ router.post("/user", (req, res, next) => {
 
     }
     data.push(person)
-    res.status(201).json(person)
+    return res.status(201).json(person)
 
 })
-router.put("/user/:id", (req, res) => {
+userRouter.put("/:id", validateMiddleware, (req, res) => {
     const newData = req.body;
     const id = req.params.id;
     const person = data.find((element) => element.id == id)
     person.fullname = newData.fullname;
     person.gender = newData.gender;
     person.age = newData.age
-    res.status(204).json({ message: "updated" })
-
-
-
+    return res.status(204).json({ message: "updated" })
 })
-router.delete("/user/:id", (req, res) => {
+userRouter.delete("/:id", (req, res) => {
     const id = req.params.id
     console.log(id)
     const person = data.find((element) => element.id == id)
@@ -59,4 +57,4 @@ router.delete("/user/:id", (req, res) => {
     res.status(204).json({ message: "deleted" })
 })
 
-module.exports = router
+module.exports = userRouter
