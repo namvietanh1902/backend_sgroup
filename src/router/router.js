@@ -27,7 +27,7 @@ userRouter.post("/", validateMiddleware, (req, res, next) => {
     const id = data.reduce((acc, curr) => {
         return acc > curr.id ? acc : curr.id
 
-    }, 0) + 1
+    }, 0) + 1;
 
     const person = {
         "id": id,
@@ -35,9 +35,9 @@ userRouter.post("/", validateMiddleware, (req, res, next) => {
         "gender": req.body.gender,
         "age": req.body.age
 
-    }
-    data.push(person)
-    return res.status(201).json(person)
+    };
+    data.push(person);
+    return res.status(201).json(person);
 
 })
 userRouter.put("/:id", validateMiddleware, (req, res) => {
