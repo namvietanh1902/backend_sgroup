@@ -54,7 +54,7 @@ const updateUser = (req, res) => {
         gender=?,
         age =?
         WHERE id =?;`
-    connection.query(query, [name, age, gender, id], (err, result) => {
+    connection.query(query, [name, gender, age, id], (err, result) => {
         if (err) {
             console.log(err)
             return res.status(401).json({
