@@ -1,16 +1,10 @@
 const connection = require('../database/connection')
-const getAllUsers = (req, res) => {
-    let query = "SELECT * FROM User";
+const getAllUsers = async (req, res) => {
+    let query = "SELECT * FROM Users";
+    let user = await connection.query(query);
+    return res.status(200).json(user[0]);
 
-
-    connection.query(query, (err, result) => {
-        if (err) {
-            return res.status(404).json({
-                message: "Error getting data"
-            });
-        }
-        return res.status(200).json(result);
-    })
+    
 }
 const getUserById = (req, res) => {
     const id = req.params.id
@@ -29,7 +23,7 @@ const createUser = (req, res) => {
     const age = req.body.age
     const gender = req.body.gender;
     console.log(name)
-    let query = "INSERT INTO User(name,gender,age) VALUES (?,?,?)";
+    let query = "INSERT INTO Users(name,gender,age) VALUES (?,?,?)";
     connection.query(query, [name, gender, age], (err, result) => {
         if (err) {
             console.log(err)
@@ -49,7 +43,7 @@ const updateUser = (req, res) => {
     const age = user.age;
     const gender = user.gender;
     const id = req.params.id;
-    let query = `UPDATE User
+    let query = `UPDATE Users
         SET name = ?, 
         gender=?,
         age =?
@@ -68,7 +62,7 @@ const updateUser = (req, res) => {
     })
 }
 const deleteUser = (req, res) => {
-    let query = `DELETE FROM User WHERE id =?;`;
+    let query = `DELETE FROM Users WHERE id =?;`;
     let id = req.params.id;
     connection.query(query, id, (err, result) => {
         if (err) {
