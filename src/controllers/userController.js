@@ -1,22 +1,20 @@
 const connection = require('../database/connection')
+const userService = require('../services/userService')
 const getAllUsers = async (req, res) => {
-    let query = "SELECT * FROM Users";
-    let user = await connection.query(query);
-    return res.status(200).json(user[0]);
+    const users = await userService.getAllUsers();
+    console.log(users)
+    return res.status(200).json(users);
 
-    
+
 }
-const getUserById = (req, res) => {
+const getUserById = async (req, res) => {
     const id = req.params.id
-    let query = "SELECT * FROM User WHERE id =?";
-    connection.query(query, [id], (err, result) => {
-        if (err) {
-            return res.status(404).json({
-                message: "Error getting data"
-            });
-        }
-        return res.status(200).json(result[0]);
-    })
+    let user = await userService.getUserById(id);
+    console.log(user);
+    if (user) {
+        return res.status(200).json(user);
+    }
+    else res.status(404).json({ message: "Not found" })
 }
 const createUser = (req, res) => {
     const name = req.body.name

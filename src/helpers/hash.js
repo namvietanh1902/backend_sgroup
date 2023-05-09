@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const hashPassword = (input)=>{
+const hashPassword = (input) => {
     const salt = crypto.randomBytes(16).toString('hex');
     const hashedPassword = crypto.pbkdf2Sync(
         input,
@@ -13,7 +13,7 @@ const hashPassword = (input)=>{
         hashedPassword
     }
 }
-const compareHash = (hash,salt,input)=>{
+const createHash = (salt, input) => {
     const hashedInput = crypto.pbkdf2Sync(
         input,
         salt,
@@ -21,9 +21,9 @@ const compareHash = (hash,salt,input)=>{
         64,
         'sha1'
     ).toString('hex');
-    return hash === hashedInput;
+    return hashedInput;
 }
-module.exports={
+module.exports = {
     hashPassword,
-    compareHash
+    createHash
 };
