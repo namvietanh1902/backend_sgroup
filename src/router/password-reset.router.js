@@ -3,6 +3,6 @@ const router = require('express').Router()
 //const authenticateMiddleware= require('../middleware/authenticateMiddleware')
 
 const resetController = require("../controllers/password-reset.controller")
-router.get('/', resetController.sendResetMail)
-router.post('/:token', resetController.resetPassword)
+router.post('/', resetController.sendResetMail)
+router.post('/refresh', resetController.resetPassword)
 module.exports = router

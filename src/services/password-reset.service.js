@@ -11,7 +11,6 @@ const sendResetMail = async (email) => {
         if (tokenUpdated) {
             const mailSent = await mailService.sendEmail(user.email, "Password Reset Token", token);
             console.log(mailSent)
-
             return mailSent;
         }
 

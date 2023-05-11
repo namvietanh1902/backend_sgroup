@@ -12,8 +12,7 @@ const sendResetMail = async (req, res) => {
     });
 }
 const resetPassword = async (req, res) => {
-    const password = req.body.password;
-    const token = req.params.token;
+    const { password, token } = req.body;
     const isReset = await resetService.resetPassword(token, password);
     if (isReset) {
         return res.status(200).json({
