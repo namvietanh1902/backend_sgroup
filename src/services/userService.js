@@ -1,33 +1,32 @@
 const { getOne, create, getMany } = require('../database/query')
 const db = require('../database/connection')
 const connection = require('../database/connection')
-const getAllUsers = async () => {
-    let query = "SELECT * FROM User";
-    let user = await getMany({
-        db: db,
-        query
-    });
-    return user;
+const { knex } = require('../database/knex_connection')
 
+const getAllUsers = async (page, search) => {
+    const perPage = 4;
+    const query = search || '';
+    const pageIndex = page || 1;
+    console.log(query, pageIndex)
+    let users = await knex('User')
+        .select('*')
+        .whereILike('name', `%${query}%`)
+        .offset(perPage * (pageIndex - 1))
+        .limit(perPage);
+    return users;
 
 }
 const getUserById = async (id) => {
-    let query = "SELECT * FROM User WHERE id =?";
-    let user = await getOne({
-        db: db,
-        query,
-        params: [id]
-    });
+    let user = await knex('User')
+        .select('*')
+        .where('id', id)
     return user;
 
 }
 const getUserByToken = async (token) => {
-    let query = "SELECT * FROM User WHERE passwordResetToken =?";
-    let user = await getOne({
-        db: db,
-        query,
-        params: [token]
-    });
+    let user = await knex('User')
+        .select('*')
+        .where('passwordResetToken', token)
     console.log(user);
     const exp = user.passwordResetExpiration;
     const now = new Date();
@@ -58,40 +57,28 @@ const createUser = (body) => {
     })
     return isCreated;
 }
-const updateUser = (user) => {
+const updateUser = async (user, id, UpdatedBy) => {
+
     const name = user.name;
     const age = user.age;
     const gender = user.gender;
-    const id = req.params.id;
-    let query = `UPDATE User
-        SET name = ?, 
-        gender=?,
-        age =?
-        WHERE id =?;`
-    let isUpdated = connection.query(query, [name, gender, age, id])
-        .then(() => {
-            return true;
-        })
-        .catch(err => {
-            console.log(err);
-            return false;
-        });
+
+    const newUser = {
+        name, age, gender, UpdatedBy
+    }
+
+    let isUpdated = await knex('User')
+        .where('id', id)
+        .update(newUser)
     return isUpdated
 }
-const updateToken = (user, token) => {
+const updateToken = async (user, token) => {
     const id = user.id;
-    const now = new Date();
-    const exp = new Date(now.getTime() + 15 * 60 * 1000).toLocaleTimeString();
-    console.log(exp);
+    const exp = new Date(Date.now() + 30 * 60 * 1000);
     let query = `UPDATE User SET passwordResetToken = ?, passwordResetExpiration=?  WHERE id =?;`
-    let isUpdated = connection.query(query, [token, exp, id])
-        .then(() => {
-            return true;
-        })
-        .catch(err => {
-            console.log(err);
-            return false;
-        });
+    let isUpdated = await knex('User')
+        .where('id', id)
+        .update({ token, exp });
     return isUpdated
 
 }
@@ -110,17 +97,17 @@ const resetPassword = (password, user) => {
     return isUpdated
 
 }
-const deleteUser = (id) => {
-    let query = `DELETE FROM User WHERE id =?;`;
-    let isDeleted = connection.query(query, [id])
-        .then(() => {
-            return true;
-        })
-        .catch(err => {
-            console.log(err);
-            return false;
-        });
+const deleteUser = async (id) => {
+    let isDeleted = await knex('User')
+        .where('id', id)
+        .del()
     return isDeleted;
+}
+const searchUser = async (name) => {
+    let users = await knex('User')
+        .select('*')
+        .whereILike('name', `%${name}%`);
+    return users;
 }
 
 module.exports = {
@@ -132,6 +119,7 @@ module.exports = {
     getUserByEmail,
     updateToken,
     getUserByToken,
-    resetPassword
+    resetPassword,
+    searchUser
 }
 

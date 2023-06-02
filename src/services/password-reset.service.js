@@ -9,7 +9,12 @@ const sendResetMail = async (email) => {
         const token = createHash(user.salt, secret);
         const tokenUpdated = await userService.updateToken(user, token);
         if (tokenUpdated) {
-            const mailSent = await mailService.sendEmail(user.email, "Password Reset Token", token);
+            const content =
+                `
+                <p>Username: ${user.username}</p>
+                <p>Reset password token: ${token} </p>
+            `
+            const mailSent = await mailService.sendEmail(user.email, "Password Reset Token", content);
             console.log(mailSent)
             return mailSent;
         }

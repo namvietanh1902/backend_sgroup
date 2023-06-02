@@ -8,14 +8,19 @@ const sendEmail = async (email, subject, text) => {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS,
         },
-
+        poolConfig: {
+            maxConnections: 3,
+            maxMessages: 10,
+            rateDelta: 1000,
+            rateLimit: 5
+        }
 
     });
     let isSend = await transporter.sendMail({
         from: 'sgroup@gmail.com',
         to: email,
         subject: subject,
-        text: text,
+        html: text,
     }).then(() => {
         return true;
     }).catch((err) => {

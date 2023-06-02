@@ -1,22 +1,30 @@
 const { getOne, create, getMany } = require('../database/query')
 const db = require('../database/connection')
-const register = async (name, username, salt, password, age, email, gender) => {
-    const query = "INSERT INTO User(name,username,salt,password,age,email,gender) VALUES (?,?,?,?,?,?,?)";
-    const result = await create(
-        {
-            db,
-            query,
-            params: [name, username, salt, password, age, email, gender]
-        });
+const { knex } = require('../database/knex_connection')
+const register = async (name, username, salt, password, age, email, gender, sub) => {
+    const CreatedBy = sub || username;
+    const user = {
+        name,
+        username,
+        salt,
+        password,
+        age,
+        email,
+        gender,
+        CreatedBy,
+
+    }
+
+    const result = await knex('User')
+        .insert(user)
     return result
 }
 const getOneByUsername = async (username) => {
-    const query = "SELECT * FROM User WHERE username = ?";
-    const user = await getOne({
-        db,
-        query,
-        params: username
-    });
+    const user = await knex('User')
+        .select('*')
+        .where('username', username)
+        .first();
+    if (user.length == 0) return null;
     return user;
 }
 module.exports = {

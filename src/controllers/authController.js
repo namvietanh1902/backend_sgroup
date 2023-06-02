@@ -5,7 +5,7 @@ require('dotenv').config();
 const login = async (req, res) => {
     const { username, password } = req.body;
     const user = await authService.getOneByUsername(username);
-    console.log(user);
+
     if (user) {
         const hashedPassword = createHash(user.salt, password);
         if (hashedPassword === user.password) {
@@ -32,6 +32,7 @@ const login = async (req, res) => {
 }
 const register = async (req, res) => {
     try {
+        const user = req.session.sub;
         const { name, username, password, age, email, gender } = req.body;
         const userExisted = await authService.getOneByUsername(username);
         console.log(userExisted)
@@ -41,7 +42,7 @@ const register = async (req, res) => {
             });
         }
         const { salt, hashedPassword } = hashPassword(password);
-        const userCreated = await authService.register(name, username, salt, hashedPassword, age, email, gender);
+        const userCreated = await authService.register(name, username, salt, hashedPassword, age, email, gender, user);
         console.log(userCreated)
         if (userCreated) {
             return res.status(201).json({
