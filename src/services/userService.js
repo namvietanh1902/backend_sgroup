@@ -3,18 +3,28 @@ const db = require('../database/connection')
 const connection = require('../database/connection')
 const { knex } = require('../database/knex_connection')
 
-const getAllUsers = async (page, search) => {
+const getAllUsers = async (page) => {
     const perPage = 4;
-    const query = search || '';
     const pageIndex = page || 1;
-    console.log(query, pageIndex)
     let users = await knex('User')
         .select('*')
-        .whereILike('name', `%${query}%`)
         .offset(perPage * (pageIndex - 1))
         .limit(perPage);
     return users;
 
+}
+const searchUser = async (page, query) => {
+    const perPage = 4;
+    const search = query || '';
+    const pageIndex = page || 1;
+    console.log(query, pageIndex)
+    let users = await knex('User')
+        .select('*')
+        .whereILike('name', `%${search}%`)
+        .offset(perPage * (pageIndex - 1))
+        .limit(perPage);
+
+    return users;
 }
 const getUserById = async (id) => {
     let user = await knex('User')
@@ -102,12 +112,6 @@ const deleteUser = async (id) => {
         .where('id', id)
         .del()
     return isDeleted;
-}
-const searchUser = async (name) => {
-    let users = await knex('User')
-        .select('*')
-        .whereILike('name', `%${name}%`);
-    return users;
 }
 
 module.exports = {

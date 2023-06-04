@@ -2,12 +2,18 @@ const connection = require('../database/connection')
 const userService = require('../services/userService')
 const getAllUsers = async (req, res) => {
     const page = req.query.page;
-    const search = req.query.search;
-    const users = await userService.getAllUsers(page, search);
-    console.log(page, search);
+
+    const users = await userService.getAllUsers(page);
     return res.status(200).json(users);
 
 
+}
+const searchUser = async (req, res) => {
+    const page = req.query.page;
+    const search = req.query.query;
+    const users = await userService.searchUser(page, search);
+
+    return res.status(200).json(users);
 }
 const getUserById = async (req, res) => {
     const id = req.params.id
@@ -54,6 +60,7 @@ module.exports = {
     deleteUser,
     getUserById,
     updateUser,
+    searchUser
 
 }
 
