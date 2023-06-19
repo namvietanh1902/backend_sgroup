@@ -85,10 +85,10 @@ const updateUser = async (user, id, UpdatedBy) => {
 const updateToken = async (user, token) => {
     const id = user.id;
     const exp = new Date(Date.now() + 30 * 60 * 1000);
-    let query = `UPDATE User SET passwordResetToken = ?, passwordResetExpiration=?  WHERE id =?;`
+
     let isUpdated = await knex('User')
         .where('id', id)
-        .update({ token, exp });
+        .update({ passwordResetToken: token, passwordResetExpiration: exp });
     return isUpdated
 
 }

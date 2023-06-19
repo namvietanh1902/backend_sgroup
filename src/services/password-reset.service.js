@@ -24,7 +24,7 @@ const sendResetMail = async (email) => {
 }
 const resetPassword = async (token, password) => {
     const user = await userService.getUserByToken(token);
-    console.log(user);
+
     if (user) {
         const hashedPassword = createHash(user.salt, password)
         const isPasswordReset = await userService.resetPassword(hashedPassword, user);

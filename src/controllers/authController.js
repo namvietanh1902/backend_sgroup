@@ -11,7 +11,7 @@ const login = async (req, res) => {
         if (hashedPassword === user.password) {
             const token = jwt.sign({
                 sub: user.username,
-                email: user.email
+                id: user.id
             },
                 process.env.JWT_SECRET,
                 {
